@@ -74,7 +74,7 @@
     },
     "UnifiedExtensionForFemiwiki": {
       "template": "https://github.com/femiwiki/UnifiedExtensionForFemiwiki/archive/$1.tar.gz",
-      "version": "v0.0.2"
+      "version": "553b9548"
     },
     "Femiwiki": {
       "type": "skin",
