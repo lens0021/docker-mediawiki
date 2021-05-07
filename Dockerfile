@@ -93,7 +93,7 @@ RUN xcaddy build \
 #   /tmp/log/cron          크론 로그
 #   /tini                  tini
 #
-FROM --platform=$TARGETPLATFORM php:7.4.16-fpm
+FROM --platform=$TARGETPLATFORM php:8.0.5-fpm
 ARG TARGETPLATFORM
 
 # Install dependencies and utilities
