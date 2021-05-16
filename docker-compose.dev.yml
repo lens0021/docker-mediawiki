@@ -5,7 +5,6 @@ services:
     command: caddy run
     ports:
       - 80:80
-      - 443:443
     volumes:
       - caddy:/etc/caddycerts
       - ./development/Caddyfile:/srv/femiwiki.com/Caddyfile:ro
@@ -81,8 +80,46 @@ services:
           - RESTBASE_HOSTNAME # secret.php.example에 적힌 기본값
   mathoid:
     image: ghcr.io/femiwiki/mathoid:latest
+  pmm-server:
+    image: percona/pmm-server:2
+    hostname: pmm-server
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    ports:
+      - "443:443"
+    volumes:
+      - data:/srv
+      - development/ps-memory-summary.yml:/usr/local/percona/pmm2/collectors/custom-queries/mysql/high-resolution/ps-memory-summary.yml
+  pmm-client:
+    image: percona/pmm-client:2
+    hostname: pmm-client-myhost
+    restart: always
+    ports:
+      - "42000:42000"
+      - "42001:42001"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    volumes:
+      - development/pmm-agent.yaml:/etc/pmm-agent.yaml
+      - pmm-client-data:/srv
+    environment:
+      - PMM_AGENT_CONFIG_FILE=/etc/pmm-agent.yaml
+      - PMM_AGENT_SERVER_USERNAME=admin
+      - PMM_AGENT_SERVER_PASSWORD=admin_password_please_change
+      - PMM_AGENT_SERVER_ADDRESS=pmm-server
+      - PMM_AGENT_SERVER_INSECURE_TLS=true
+    # entrypoint: pmm-agent setup
 
 volumes:
   database:
   caddy:
   l18n_cache:
+  data:
+  pmm-client-data:
